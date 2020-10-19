@@ -1,0 +1,47 @@
+<?php
+
+namespace App;
+
+use Illuminate\Notifications\Notifiable;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+
+
+class User extends Eloquent implements JWTSubject,AuthenticatableContract
+{
+    use AuthenticableTrait;
+    use Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $connection='mongodb';
+    
+    protected $fillable = [
+        'name', 'gender','email', 'password',
+    ];
+
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    public function getJWTIdentifier()
+    {
+       return $this->getKey();
+    }
+    public function getJWTCustomClaims()
+    {
+       return [];
+    }
+}
